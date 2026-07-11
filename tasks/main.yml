@@ -2,14 +2,17 @@
 
 - name: Include OS family variables
   ansible.builtin.include_vars: "{{ ansible_facts['os_family'] }}.yml"
+  tags: always
 - name: Include Distribution family variables
   ansible.builtin.include_vars: "{{ ansible_facts['distribution'] }}.yml"
   when: ansible_facts['distribution'] == "Ubuntu"
+  tags: always
 - name: Include Distribution version variables
   ansible.builtin.include_vars: "{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
   when:
     - (ansible_facts['distribution'] == "Ubuntu" and ansible_facts['distribution_major_version']|int >= 22) or
       (ansible_facts['distribution'] == "Debian" and ansible_facts['distribution_major_version']|int >= 13)
+  tags: always
 
 ## not supported by raspbian, https://github.com/raspberrypi/linux/issues/1352
 ## nok Alpine. package in edge@testing but 'Error - audit support not in kernel'
@@ -19,3 +22,4 @@
     - ansible_facts['system'] == 'Linux'
     - not (ansible_facts['distribution'] == "Debian" and ansible_facts['architecture'] == "armv6l")
     - ansible_facts['os_family'] != "Alpine"
+  tags: always
